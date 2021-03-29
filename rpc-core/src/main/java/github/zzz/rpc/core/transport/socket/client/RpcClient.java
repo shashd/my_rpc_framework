@@ -16,7 +16,7 @@ public class RpcClient{
 
     private static final Logger logger = LoggerFactory.getLogger(RpcClient.class);
 
-    int defaultSerializer = CommonSerializer.DEFAULT_SERIALIZER;
+    int default_serializer = CommonSerializer.DEFAULT_SERIALIZER;
 
     /**
      * 发送一个RpcRequest对象，并且接受返回的RpcResponse对象

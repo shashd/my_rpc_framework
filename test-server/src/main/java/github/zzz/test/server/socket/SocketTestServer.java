@@ -1,7 +1,7 @@
 package github.zzz.test.server.socket;
 
 import github.zzz.rpc.api.HelloService;
-import github.zzz.rpc.core.transport.socket.server.RpcServer;
+import github.zzz.rpc.core.remoting.transport.socket.server.RpcServer;
 import github.zzz.test.server.impl.HelloServiceImpl;
 
 /**

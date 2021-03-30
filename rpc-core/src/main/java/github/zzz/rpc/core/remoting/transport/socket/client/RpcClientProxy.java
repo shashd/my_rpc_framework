@@ -1,8 +1,8 @@
-package github.zzz.rpc.core.transport.socket.client;
+package github.zzz.rpc.core.remoting.transport.socket.client;
 
 
-import github.zzz.rpc.common.entity.RpcRequest;
-import github.zzz.rpc.common.entity.RpcResponse;
+import github.zzz.rpc.core.remoting.dto.RpcRequest;
+import github.zzz.rpc.core.remoting.dto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +13,7 @@ import java.util.UUID;
 
 /**
  * 实现RPC客户端动态代理
+ * 此处用的是JDK动态代理
  * @author zzz
  */
 public class RpcClientProxy implements InvocationHandler {
@@ -42,7 +43,7 @@ public class RpcClientProxy implements InvocationHandler {
     }
 
     /**
-     * 实现动态代理的处理逻辑
+     * 实现动态代理的处理逻辑，指明代理对象的方法被调用时的动作
      * @param proxy 动态生成的代理类
      * @param method 与代理类对象调用的方法相对应
      * @param args 当前 method 方法的参数

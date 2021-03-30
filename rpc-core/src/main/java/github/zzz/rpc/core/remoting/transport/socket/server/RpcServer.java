@@ -1,6 +1,5 @@
-package github.zzz.rpc.core.transport.socket.server;
+package github.zzz.rpc.core.remoting.transport.socket.server;
 
-import github.zzz.rpc.core.transport.WorkerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,25 @@ public class RpcServer {
         threadPool = new ThreadPoolExecutor(corePoolSize,maximumPoolSize,keepAliveTime,TimeUnit.SECONDS,
                 workingQueue,threadFactory);
 
+    }
+
+    /**
+     * 注册完一个服务后服务器立刻开始监听
+     * 通过WorkerThread执行具体的监听逻辑
+     * @param service 注册服务
+     * @param port 端口号
+     */
+    public void register(Object service, int port) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            logger.info("Server is starting...");
+            Socket socket;
+            while((socket = serverSocket.accept()) != null) {
+                logger.info("Client connected, ip: " + socket.getInetAddress());
+                threadPool.execute(new WorkerThread(socket, service));
+            }
+        } catch (Exception e) {
+            logger.error("Error happens when running: ", e);
+        }
     }
 
 

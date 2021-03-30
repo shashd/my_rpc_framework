@@ -1,5 +1,5 @@
-package github.zzz.rpc.core.transport.socket.client;
-import github.zzz.rpc.common.entity.RpcRequest;
+package github.zzz.rpc.core.remoting.transport.socket.client;
+import github.zzz.rpc.core.remoting.dto.RpcRequest;
 import github.zzz.rpc.core.serializer.CommonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

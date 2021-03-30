@@ -1,8 +1,7 @@
-package github.zzz.rpc.core.transport;
+package github.zzz.rpc.core.remoting.transport.socket.server;
 
-import github.zzz.rpc.common.entity.RpcRequest;
-import github.zzz.rpc.common.entity.RpcResponse;
-import github.zzz.rpc.core.transport.socket.client.RpcClientProxy;
+import github.zzz.rpc.core.remoting.dto.RpcRequest;
+import github.zzz.rpc.core.remoting.dto.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

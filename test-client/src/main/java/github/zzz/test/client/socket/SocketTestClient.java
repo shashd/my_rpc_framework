@@ -2,7 +2,7 @@ package github.zzz.test.client.socket;
 
 import github.zzz.rpc.api.Hello;
 import github.zzz.rpc.api.HelloService;
-import github.zzz.rpc.core.transport.socket.client.RpcClientProxy;
+import github.zzz.rpc.core.remoting.transport.socket.client.RpcClientProxy;
 
 /**
  * socket客户端测试

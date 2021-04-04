@@ -3,7 +3,7 @@ package github.zzz.test.server.socket;
 import github.zzz.rpc.api.HelloService;
 import github.zzz.rpc.core.registry.DefaultServiceRegistry;
 import github.zzz.rpc.core.registry.ServiceRegistry;
-import github.zzz.rpc.core.remoting.transport.socket.server.RpcServer;
+import github.zzz.rpc.core.remoting.transport.socket.server.SocketServer;
 import github.zzz.test.server.impl.HelloServiceImpl;
 
 /**
@@ -18,8 +18,8 @@ public class SocketTestServer {
         ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
         serviceRegistry.register(helloService);
         // 2. start request handler
-        RpcServer rpcServer = new RpcServer(serviceRegistry);
-        rpcServer.start(9000);
+        SocketServer socketServer = new SocketServer(serviceRegistry);
+        socketServer.start(9000);
 
     }
 }

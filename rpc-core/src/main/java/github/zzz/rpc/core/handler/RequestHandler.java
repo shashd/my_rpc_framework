@@ -31,6 +31,7 @@ public class RequestHandler {
         Object result = null;
         try {
             result = invokeTargetMethod(rpcRequest, service);
+            // Service : github.zzz.rpc.api.HelloService successfully use the Method : sayHello
             logger.info("Service : {} successfully use the Method : {}",rpcRequest.getInterfaceName(),
                     rpcRequest.getMethodName());
         } catch (IllegalAccessException | InvocationTargetException e){

@@ -51,6 +51,8 @@ public class DefaultServiceRegistry implements ServiceRegistry{
         for (Class<?> cls: interfaces){
             serviceMap.put(cls.getCanonicalName(), service);
         }
+        // For interface: [interface github.zzz.rpc.api.HelloService],
+        // register service: github.zzz.test.server.impl.HelloServiceImpl
         logger.info("For interface: {}, register service: {}", interfaces, serviceName);
     }
 

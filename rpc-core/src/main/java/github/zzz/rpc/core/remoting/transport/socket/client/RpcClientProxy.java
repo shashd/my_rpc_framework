@@ -55,7 +55,7 @@ public class RpcClientProxy implements InvocationHandler {
 
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),method.getDeclaringClass().getName(),
                 method.getName(),args,method.getParameterTypes(),false);
-        RpcClient rpcClient = new RpcClient();
-        return ((RpcResponse)rpcClient.sendRequest(rpcRequest,host,port)).getData();
+        SocketClient socketClient = new SocketClient();
+        return ((RpcResponse)socketClient.sendRequest(rpcRequest,host,port)).getData();
     }
 }

@@ -2,22 +2,20 @@ package github.zzz.rpc.core.remoting.transport.socket.server;
 
 import github.zzz.rpc.core.handler.RequestHandler;
 import github.zzz.rpc.core.registry.ServiceRegistry;
+import github.zzz.rpc.core.remoting.RpcServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.*;
 
 /**
  * 实现rpc中的server
- * 对结构进行了改动
  * @author zzz
  */
-public class RpcServer {
-
-    private static final Logger logger = LoggerFactory.getLogger(RpcServer.class);
+public class SocketServer implements RpcServer {
+    private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
 
 
     private static final int BLOCKING_QUEUE_CAPACITY = 100;
@@ -32,7 +30,7 @@ public class RpcServer {
     /**
      * 初始化线程池，注册服务等内容
      */
-    public RpcServer(ServiceRegistry serviceRegistry){
+    public SocketServer(ServiceRegistry serviceRegistry){
         this.serviceRegistry = serviceRegistry;
         BlockingQueue<Runnable> workingQueue = new ArrayBlockingQueue<>(BLOCKING_QUEUE_CAPACITY);
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
@@ -46,6 +44,7 @@ public class RpcServer {
      * 注册完一个服务后服务器立刻开始监听
      * 通过WorkerThread执行具体的监听逻辑
      */
+    @Override
     public void start(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             logger.info("Server is starting...");
@@ -59,7 +58,4 @@ public class RpcServer {
             logger.error("Error happens when running: ", e);
         }
     }
-
-
-
 }

@@ -19,14 +19,7 @@ public class WorkerThread implements Runnable{
 
     private static final Logger logger = LoggerFactory.getLogger(WorkerThread.class);
 
-    /**
-     * socket
-     */
     private Socket socket;
-
-    /**
-     * service
-     */
     private Object service;
 
     public WorkerThread(Socket socket, Object service){
@@ -34,12 +27,17 @@ public class WorkerThread implements Runnable{
         this.service = service;
     }
 
+    /**
+     * 服务端接受RpcRequest处理之后返回RpcResponse
+     */
     @Override
     public void run(){
         try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
             RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
+
             Method method = service.getClass().getMethod(rpcRequest.getMethodName(), rpcRequest.getParamTypes());
+            // 通过反射得到方法执行后的结果
             Object returnObject = method.invoke(service, rpcRequest.getParameters());
 
             objectOutputStream.writeObject(RpcResponse.success(returnObject));

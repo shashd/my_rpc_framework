@@ -1,10 +1,11 @@
 package github.zzz.rpc.core.remoting;
 
-import github.zzz.rpc.core.remoting.dto.RpcRequest;
+import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.core.serializer.CommonSerializer;
 
 /**
- * 客户端抽象接口
+ * 客户端抽象接口, 这样可以提供不同的实现方案
+ * BIO以及NIO的实现方案
  * @author zzz
  */
 public interface RpcClient {
@@ -14,9 +15,7 @@ public interface RpcClient {
     /**
      * 发送请求
      * @param rpcRequest
-     * @param host
-     * @param port
-     * @return
+     * @return rpcResponse/null
      */
-    Object sendRequest(RpcRequest rpcRequest, String host, int port);
+    Object sendRequest(RpcRequest rpcRequest);
 }

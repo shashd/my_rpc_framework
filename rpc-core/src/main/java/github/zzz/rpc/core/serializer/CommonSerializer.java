@@ -15,8 +15,26 @@ public interface CommonSerializer {
     Integer JSON_SERIALIZER = 1;
     Integer HESSIAN_SERIALIZER = 2;
     Integer PROTOBUF_SERIALIZER = 3;
+
     Integer DEFAULT_SERIALIZER = KRYO_SERIALIZER;
 
+    /**
+     * 但是这里为什么一定要使用static来进行修饰呢？
+     * 根据code返回对应的序列化实例
+     * @param code code for which serializer
+     * @return specific serializer
+     */
+    static CommonSerializer getByCode(int code){
+        switch (code){
+            case 0:
+                return new KryoSerializer();
+            case 1:
+                return new JsonSerializer();
+            // todo: 还有其他两种的实现方式
+            default:
+                return null;
+        }
+    }
 
     /**
      * 序列化方法接口

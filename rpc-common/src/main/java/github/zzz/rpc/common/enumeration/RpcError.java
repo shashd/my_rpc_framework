@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * RPC调用异常
+ * RPC调用异常的情况
+ * 可以直接返回对应code的RpcException的信息
  * todo: 完善更多的exception的情况
  * @author zzz
  */
@@ -17,8 +18,12 @@ public enum RpcError {
      */
     UNKNOWN_ERROR("UNKNOWN ERROR"),
     SERVICE_NOT_IMPLEMENT_ANY_INTERFACE("SERVICE NOT IMPLEMENT ANY INTERFACE"),
-    SERVICE_NOT_FOUND("SERVICE NOT FOUND");
-
+    SERVICE_NOT_FOUND("SERVICE NOT FOUND"),
+    UNKNOWN_PROTOCOL("UNKNOWN PACKAGE"),
+    UNKNOWN_PACKAGE_TYPE("UNKNOWN PACKAGE TYPE"),
+    UNKNOWN_SERIALIZER("UNKNOWN SERIALIZER"),
+    SERVICE_INVOCATION_FAILURE("SERVICE INVOCATION FAILURE"),
+    RESPONSE_NOT_MATCH("RESPONSE NOT MATCH");
 
     private final String message;
 }

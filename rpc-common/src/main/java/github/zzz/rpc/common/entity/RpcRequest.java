@@ -1,4 +1,4 @@
-package github.zzz.rpc.core.remoting.dto;
+package github.zzz.rpc.common.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package github.zzz.rpc.core.remoting.dto;
+package github.zzz.rpc.common.entity;
 
 
 import github.zzz.rpc.common.enumeration.ResponseCode;

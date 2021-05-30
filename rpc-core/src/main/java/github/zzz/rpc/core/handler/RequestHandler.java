@@ -1,12 +1,11 @@
 package github.zzz.rpc.core.handler;
 
 import github.zzz.rpc.common.enumeration.ResponseCode;
-import github.zzz.rpc.core.remoting.dto.RpcRequest;
-import github.zzz.rpc.core.remoting.dto.RpcResponse;
+import github.zzz.rpc.common.entity.RpcRequest;
+import github.zzz.rpc.common.entity.RpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.bind.annotation.XmlElementDecl;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 

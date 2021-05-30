@@ -29,6 +29,7 @@ public class SocketServer implements RpcServer {
 
     /**
      * 初始化线程池，注册服务等内容
+     * 注册中心的类作为参数传入
      */
     public SocketServer(ServiceRegistry serviceRegistry){
         this.serviceRegistry = serviceRegistry;

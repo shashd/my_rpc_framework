@@ -20,13 +20,15 @@ public class DefaultServiceRegistry implements ServiceRegistry{
 
     /**
      * 服务名和对象存储的容器
+     * static保证全局唯一的注册信息
      */
-    private final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
+    private static final Map<String, Object> serviceMap = new ConcurrentHashMap<>();
 
     /**
      * 已经注册的服务名容器
+     * static保证全局唯一的注册信息
      */
-    private final Set<String> registeredService = ConcurrentHashMap.newKeySet();
+    private static final Set<String> registeredService = ConcurrentHashMap.newKeySet();
 
 
     /**
@@ -43,7 +45,7 @@ public class DefaultServiceRegistry implements ServiceRegistry{
         }
         registeredService.add(serviceName);
 
-        // 2. 存储到Map
+        // 2. 存储到Map，对外暴露的是interface接口
         Class<?>[] interfaces = service.getClass().getInterfaces();
         if (interfaces.length == 0){
             throw new RpcException(RpcError.SERVICE_NOT_IMPLEMENT_ANY_INTERFACE);

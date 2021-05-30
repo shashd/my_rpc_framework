@@ -1,4 +1,4 @@
-，package github.zzz.rpc.core.codec;
+package github.zzz.rpc.core.codec;
 
 import github.zzz.rpc.common.enumeration.PackageType;
 import github.zzz.rpc.common.enumeration.RpcError;

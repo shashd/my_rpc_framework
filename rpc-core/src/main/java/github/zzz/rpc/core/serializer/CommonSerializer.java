@@ -16,7 +16,7 @@ public interface CommonSerializer {
     Integer HESSIAN_SERIALIZER = 2;
     Integer PROTOBUF_SERIALIZER = 3;
 
-    Integer DEFAULT_SERIALIZER = JSON_SERIALIZER;
+    Integer DEFAULT_SERIALIZER = KRYO_SERIALIZER;
 
     /**
      * 但是这里为什么一定要使用static来进行修饰呢？

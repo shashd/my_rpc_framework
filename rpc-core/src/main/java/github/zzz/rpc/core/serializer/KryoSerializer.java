@@ -23,7 +23,7 @@ public class KryoSerializer implements CommonSerializer{
     private static final Logger logger = LoggerFactory.getLogger(KryoSerializer.class);
 
     /**
-     * 因为Kryo并不是线程安全的，所以每个现成都需要有一个自己的kryo
+     * 因为Kryo并不是线程安全的，所以每个线程都需要有一个自己的kryo
      * ThreadLocal存放Kryo对象
      */
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() ->{
@@ -47,12 +47,12 @@ public class KryoSerializer implements CommonSerializer{
         try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream ();
              Output output = new Output(byteArrayOutputStream)) {
             Kryo kryo = kryoThreadLocal.get();
+            // 序列化成byte数组
             kryo.writeObject(output,object);
             kryoThreadLocal.remove();
             return output.toBytes();
         }catch (Exception e){
             logger.info("Fail to serialize");
-            // todo: 更换成自定义的exception?
             throw new SerializationException("Fail to serialize");
         }
     }

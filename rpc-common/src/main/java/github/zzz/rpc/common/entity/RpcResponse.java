@@ -41,12 +41,14 @@ public class RpcResponse<T> implements Serializable {
 
     /**
      * 快速生成成功的响应对象
+     * todo: 设置requestId才是
      * @param data 数据
      * @return response
      */
-    public static <T> RpcResponse<T> success(T data){
+    public static <T> RpcResponse<T> success(T data, String requestId){
         RpcResponse<T> response = new RpcResponse<T>();
         response.setStatusCode(ResponseCode.SUCCESS.getCode());
+        response.setRequestId(requestId);
         response.setData(data);
         return response;
     }
@@ -56,8 +58,9 @@ public class RpcResponse<T> implements Serializable {
      * @param code 失败状态码
      * @return response
      */
-    public static <T> RpcResponse<T> fail(ResponseCode code){
+    public static <T> RpcResponse<T> fail(ResponseCode code, String requestId){
         RpcResponse<T> response = new RpcResponse<T>();
+        response.setRequestId(requestId);
         response.setStatusCode(code.getCode());
         response.setMessage(code.getMessage());
         return response;

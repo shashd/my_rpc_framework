@@ -17,6 +17,13 @@ public class SingletonFactory {
 
     private SingletonFactory(){}
 
+
+    /**
+     * 工厂模式创建单例
+     * @param clazz 名称，如github.zzz.rpc.core.handler.RequestHandler
+     * @param <T> 泛型类
+     * @return 单例
+     */
     public static <T> T getInstance(Class<T> clazz){
         // 1. 检查是否已经存在
         Object instance = objectMap.get(clazz);

@@ -2,6 +2,7 @@ package github.zzz.rpc.core.remoting.transport.netty.server;
 
 import github.zzz.rpc.common.factory.SingletonFactory;
 import github.zzz.rpc.core.handler.RequestHandler;
+import github.zzz.rpc.core.registry.DefaultServiceRegistry;
 import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
@@ -26,8 +27,8 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
     private static ServiceRegistry serviceRegistry;
 
     static {
-        requestHandler = SingletonFactory.getInstance(RequestHandler.class);
-        serviceRegistry = SingletonFactory.getInstance(ServiceRegistry.class);
+        requestHandler = new RequestHandler();
+        serviceRegistry = new DefaultServiceRegistry();
     }
 
     /**
@@ -42,12 +43,12 @@ public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> 
         try {
             logger.info("The server receive the request : {}", msg);
             // 1. 找到注册的服务
-            String interfaceName = msg.getInterfaceName();
+            String interfaceName= msg.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
-            // 2. 通过反射调用方法得到结果
+            String requestId = msg.getRequestId();
+            // 2. 通过反射调用方法得到结果并且监听通道
             Object result = requestHandler.handle(msg,service);
-            // 3. todo: 这个部分的使用和原理还是要具体了解一下子
-            ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(result));
+            ChannelFuture future = ctx.writeAndFlush(RpcResponse.success(result,requestId));
             future.addListener(ChannelFutureListener.CLOSE);
         } finally {
             ReferenceCountUtil.release(msg);

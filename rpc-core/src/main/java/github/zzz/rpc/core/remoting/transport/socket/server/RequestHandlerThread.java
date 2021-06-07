@@ -44,7 +44,7 @@ public class RequestHandlerThread implements Runnable{
             Object service = serviceRegistry.getService(interfaceName);
             Object result = requestHandler.handle(rpcRequest, service);
             // 3. get response object
-            objectOutputStream.writeObject(RpcResponse.success(result));
+            objectOutputStream.writeObject(RpcResponse.success(result,rpcRequest.getRequestId()));
             objectOutputStream.flush();
         } catch (Exception e) {
             logger.error("Error happens when running：", e);

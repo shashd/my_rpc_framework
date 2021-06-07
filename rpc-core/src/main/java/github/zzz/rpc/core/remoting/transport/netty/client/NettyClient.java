@@ -1,5 +1,6 @@
 package github.zzz.rpc.core.remoting.transport.netty.client;
 
+import github.zzz.rpc.common.utils.RpcMessageChecker;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
 import github.zzz.rpc.core.remoting.RpcClient;
@@ -51,7 +52,9 @@ public class NettyClient implements RpcClient {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
+                        // rpcResponse -> byteBuf
                         pipeline.addLast(new CommonDecoder())
+                                // byteBuf -> rpcRequest
                                 .addLast(new CommonEncoder(new JsonSerializer()))
                                 .addLast(new NettyClientHandler());
                     }
@@ -66,7 +69,6 @@ public class NettyClient implements RpcClient {
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
         try {
-            // todo: 充分理解下对应的netty的设计结构和实现的功能
             // 通过bootstrap连接服务端
             ChannelFuture future = bootstrap.connect(host, port).sync();
             logger.info("Client connected to the server {}:{}", host, port);
@@ -83,10 +85,12 @@ public class NettyClient implements RpcClient {
                 });
                 // 阻塞等待，直到Channel关闭
                 channel.closeFuture().sync();
+                // 从管道中读取到处理好的数据
                 // 取出服务端返回对象，通过该种方法可以阻塞获得返回结果
                 AttributeKey<RpcResponse> key = AttributeKey.valueOf("rpcResponse");
                 // 因为之前的NettyClientHandler将response对象放到了ctx中，所以这里就可以直接取出了
                 RpcResponse rpcResponse = channel.attr(key).get();
+                RpcMessageChecker.check(rpcRequest,rpcResponse);
                 return rpcResponse.getData();
             }
         } catch (InterruptedException  e){

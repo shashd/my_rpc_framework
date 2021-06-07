@@ -14,18 +14,10 @@ import io.netty.handler.codec.MessageToByteEncoder;
  */
 public class CommonEncoder extends MessageToByteEncoder {
 
-
-    /**
-     * 四字节魔数，表示一个协议包
-     */
     private static final int MAGIC_NUMBER = 0xCAFEBABE;
 
     private final CommonSerializer serializer;
 
-    /**
-     * 初始化序列化器
-     * @param serializer 传入的具体实现序列化的方式
-     */
     public CommonEncoder(CommonSerializer serializer){
         this.serializer = serializer;
     }
@@ -38,7 +30,7 @@ public class CommonEncoder extends MessageToByteEncoder {
         if (o instanceof RpcRequest){
             byteBuf.writeInt(PackageType.REQUEST_PACK.getCode());
         }else{
-            byteBuf.writeInt(PackageType.REQUEST_PACK.getCode());
+            byteBuf.writeInt(PackageType.RESPONSE_PACK.getCode());
         }
         // 3. 写入序列化类型
         byteBuf.writeInt(serializer.getCode());

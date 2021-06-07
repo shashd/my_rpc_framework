@@ -40,7 +40,7 @@ public class WorkerThread implements Runnable{
             // 通过反射得到方法执行后的结果
             Object returnObject = method.invoke(service, rpcRequest.getParameters());
 
-            objectOutputStream.writeObject(RpcResponse.success(returnObject));
+            objectOutputStream.writeObject(RpcResponse.success(returnObject,rpcRequest.getRequestId()));
             objectOutputStream.flush();
         } catch (Exception e) {
             logger.error("Error happens when running：", e);

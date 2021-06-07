@@ -2,6 +2,7 @@ package github.zzz.rpc.core.remoting.transport.socket.client;
 
 import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

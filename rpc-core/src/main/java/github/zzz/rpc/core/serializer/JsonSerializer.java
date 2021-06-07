@@ -2,6 +2,7 @@ package github.zzz.rpc.core.serializer;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.common.exception.SerializeException;
 import github.zzz.rpc.common.enumeration.SerializerCode;
 import github.zzz.rpc.common.entity.RpcRequest;
@@ -47,8 +48,8 @@ public class JsonSerializer implements CommonSerializer{
         try {
             Object object = objectMapper.readValue(bytes,clazz);
             if (object instanceof RpcRequest){
-                // 转换为原来的rpcRequest的实例
                 object = handleRequest(object);
+                logger.info("The result of deserialize: " + object.toString());
             }
             return object;
         } catch (IOException e){
@@ -60,9 +61,7 @@ public class JsonSerializer implements CommonSerializer{
     }
 
     /**
-     * 因为无法保证反序列化后仍然为原实例类型
-     * 所以就需要重新对其参数进行判断和处理
-     * 而且仅仅是因为转化为JSON字符串之后是会丢失对象的类型信息的，其他的序列化方式并不会遇到这种情况
+     * 保证反序列化后仍然为原实例类型
      * @param object 反序列化得到的对象
      * @return rpcRequest
      */
@@ -70,7 +69,7 @@ public class JsonSerializer implements CommonSerializer{
         RpcRequest rpcRequest = (RpcRequest)object;
         for (int i = 0; i < rpcRequest.getParamTypes().length; i++){
             Class<?> clazz = rpcRequest.getParamTypes()[i];
-            // 检查参数的类是否相等，不同意外这反序列化失败了
+            // 检查参数的类是否相等
             if (!clazz.isAssignableFrom(rpcRequest.getParameters()[i].getClass())){
                 // 使用参数中每个实例的实际类来辅助反序列化
                 byte[] bytes = objectMapper.writeValueAsBytes(rpcRequest.getParameters()[i]);

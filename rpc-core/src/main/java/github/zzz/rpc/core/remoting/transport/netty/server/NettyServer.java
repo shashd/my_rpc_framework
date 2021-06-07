@@ -54,9 +54,11 @@ public class NettyServer implements RpcServer {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
-                            // 编码器
+                            // 解码器，是因为没有对合适的对象进行编码和解码吗？todo: 顺序是否有影响？参考下Javaguide他的写法
+                            // 接受request
+                            // 编码器，编码response
+                            // todo: 这儿的顺序是否有影响？
                             pipeline.addLast(new CommonEncoder(new JsonSerializer()));
-                            // 解码器
                             pipeline.addLast(new CommonDecoder());
                             // 数据处理器
                             pipeline.addLast(new NettyServerHandler());

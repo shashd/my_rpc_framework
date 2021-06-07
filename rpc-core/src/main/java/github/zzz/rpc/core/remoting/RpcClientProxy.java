@@ -1,11 +1,11 @@
-package github.zzz.rpc.core.remoting.transport.socket.client;
+package github.zzz.rpc.core.remoting;
 
 
 import github.zzz.rpc.common.utils.RpcMessageChecker;
-import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.core.remoting.transport.netty.client.NettyClient;
+import github.zzz.rpc.core.remoting.transport.socket.client.SocketClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,25 +24,6 @@ public class RpcClientProxy implements InvocationHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(RpcClientProxy.class);
 
-    /**
-     * 以下都是socket的时候才会使用到的
-     */
-    private String host;
-    private int port;
-    public RpcClientProxy(String host, int port) {
-        this.host = host;
-        this.port = port;
-        client = null;
-    }
-
-    public RpcClientProxy(String host, int port, RpcClient client) {
-        this.host = host;
-        this.port = port;
-        this.client = client;
-    }
-    /**
-     * netty时候使用到的
-     */
     private final RpcClient client;
     public RpcClientProxy(RpcClient client){
         this.client = client;
@@ -74,26 +55,7 @@ public class RpcClientProxy implements InvocationHandler {
 
         RpcRequest rpcRequest = new RpcRequest(UUID.randomUUID().toString(),method.getDeclaringClass().getName(),
                 method.getName(),args,method.getParameterTypes(),false);
-        RpcResponse rpcResponse = null;
-        if (client instanceof NettyClient){
-            try {
-                // 发送并且接受到请求
-                CompletableFuture<RpcResponse> completedFuture =
-                        (CompletableFuture<RpcResponse>) client.sendRequest(rpcRequest);
-                rpcResponse = completedFuture.get();
-            } catch (Exception e){
-                logger.error("Fail to send the Request message when calling the function : ",e);
-                return null;
-            }
-        }
-
-        if (client instanceof SocketClient){
-            // 发送并且接受到请求
-            rpcResponse = (RpcResponse) client.sendRequest(rpcRequest);
-        }
-        // 检查匹配的两个包，然后返回最终的结果
-        RpcMessageChecker.check(rpcRequest,rpcResponse);
-        return rpcResponse.getData();
-
+        System.out.println(rpcRequest.toString());
+        return client.sendRequest(rpcRequest);
     }
 }

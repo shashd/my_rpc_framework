@@ -7,6 +7,7 @@ import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.core.serializer.JsonSerializer;
+import github.zzz.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -55,7 +56,7 @@ public class NettyClient implements RpcClient {
                         // rpcResponse -> byteBuf
                         pipeline.addLast(new CommonDecoder())
                                 // byteBuf -> rpcRequest
-                                .addLast(new CommonEncoder(new JsonSerializer()))
+                                .addLast(new CommonEncoder(new KryoSerializer()))
                                 .addLast(new NettyClientHandler());
                     }
                 });

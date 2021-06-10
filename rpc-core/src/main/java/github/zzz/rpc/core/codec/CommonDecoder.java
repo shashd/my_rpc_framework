@@ -17,7 +17,7 @@ import java.util.List;
 /**
  * 解码器
  * 将二进制数组转换成原来的对象
- * @author zzz
+ *
  */
 public class CommonDecoder extends ReplayingDecoder {
 

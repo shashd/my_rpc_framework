@@ -6,11 +6,9 @@ import github.zzz.rpc.core.serializer.CommonSerializer;
 /**
  * 客户端抽象接口, 这样可以提供不同的实现方案
  * BIO以及NIO的实现方案
- * @author zzz
+ *
  */
 public interface RpcClient {
-
-    int default_serializer = CommonSerializer.DEFAULT_SERIALIZER;
 
     /**
      * 发送请求
@@ -18,4 +16,7 @@ public interface RpcClient {
      * @return rpcResponse/null
      */
     Object sendRequest(RpcRequest rpcRequest);
+
+    void setSerializer(CommonSerializer serializer);
+
 }

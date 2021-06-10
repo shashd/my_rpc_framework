@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 自定义协议中的字段
  * 表示该请求是调用请求还是响应请求
- * @author zzz
+ *
  */
 @Getter
 @AllArgsConstructor

@@ -16,7 +16,7 @@ import java.io.ByteArrayOutputStream;
 /**
  * Kryo序列化类，效率高
  * 抽取出的公共方法在CommonSerializer中
- * @author zzz
+ *
  */
 public class KryoSerializer implements CommonSerializer{
 

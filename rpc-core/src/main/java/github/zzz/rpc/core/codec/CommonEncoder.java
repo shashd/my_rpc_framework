@@ -10,7 +10,7 @@ import io.netty.handler.codec.MessageToByteEncoder;
 /**
  * 编码器
  * 讲Message转成Byte数组
- * @author zzz
+ *
  */
 public class CommonEncoder extends MessageToByteEncoder {
 

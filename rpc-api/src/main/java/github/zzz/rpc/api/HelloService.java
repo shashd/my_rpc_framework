@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * 测试api的接口
- * @author zzz
+ *
  */
 public interface HelloService{
 

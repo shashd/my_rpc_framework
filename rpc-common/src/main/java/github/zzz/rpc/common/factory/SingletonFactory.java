@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * 创建单例的工厂
  * 所以需要一个Map来存储多个的对象
- * @author zzz
+ *
  */
 public class SingletonFactory {
 

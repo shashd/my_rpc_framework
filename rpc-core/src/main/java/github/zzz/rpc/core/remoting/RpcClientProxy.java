@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * 实现RPC客户端动态代理
  * 此处用的是JDK动态代理
- * @author zzz
+ *
  */
 public class RpcClientProxy implements InvocationHandler {
 

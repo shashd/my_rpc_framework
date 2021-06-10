@@ -1,11 +1,14 @@
 package github.zzz.rpc.core.remoting.transport.netty.client;
 
+import github.zzz.rpc.common.enumeration.RpcError;
+import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.RpcMessageChecker;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
 import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
+import github.zzz.rpc.core.serializer.CommonSerializer;
 import github.zzz.rpc.core.serializer.JsonSerializer;
 import github.zzz.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.Bootstrap;
@@ -22,7 +25,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty实现的BIO版本的传输协议
  * 实现Client中的sendRequest的功能
- * @author zzz
+ *
  */
 public class NettyClient implements RpcClient {
 
@@ -31,6 +34,7 @@ public class NettyClient implements RpcClient {
     private String host;
     private int port;
     private static final Bootstrap bootstrap;
+    private CommonSerializer serializer;
 
     public NettyClient(String host, int port){
         this.host = host;
@@ -47,19 +51,7 @@ public class NettyClient implements RpcClient {
                 .channel(NioSocketChannel.class)
                 .handler(new LoggingHandler(LogLevel.INFO))
                 // 是否开启tcp底层心跳机制
-                .option(ChannelOption.SO_KEEPALIVE, true)
-                // 初始化通道对象
-                .handler(new ChannelInitializer<SocketChannel>() {
-                    @Override
-                    protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        ChannelPipeline pipeline = socketChannel.pipeline();
-                        // rpcResponse -> byteBuf
-                        pipeline.addLast(new CommonDecoder())
-                                // byteBuf -> rpcRequest
-                                .addLast(new CommonEncoder(new KryoSerializer()))
-                                .addLast(new NettyClientHandler());
-                    }
-                });
+                .option(ChannelOption.SO_KEEPALIVE, true);
     }
 
     /**
@@ -69,6 +61,23 @@ public class NettyClient implements RpcClient {
      */
     @Override
     public Object sendRequest(RpcRequest rpcRequest) {
+        if (serializer == null){
+            logger.error("Did not set the serializer");
+            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+        }
+        // 初始化通道
+        bootstrap.handler(new ChannelInitializer<SocketChannel>() {
+            @Override
+            protected void initChannel(SocketChannel socketChannel) throws Exception {
+                ChannelPipeline pipeline = socketChannel.pipeline();
+                // rpcResponse -> byteBuf
+                pipeline.addLast(new CommonDecoder())
+                        // byteBuf -> rpcRequest
+                        .addLast(new CommonEncoder(serializer))
+                        .addLast(new NettyClientHandler());
+            }
+        });
+
         try {
             // 通过bootstrap连接服务端
             ChannelFuture future = bootstrap.connect(host, port).sync();
@@ -98,5 +107,10 @@ public class NettyClient implements RpcClient {
             logger.error("Error happens when sending a message: ", e);
         }
         return null;
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
     }
 }

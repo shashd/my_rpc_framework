@@ -4,7 +4,7 @@ import lombok.Getter;
 
 /**
  * 响应状态码
- * @author zzz
+ *
  */
 @Getter
 public enum ResponseCode {

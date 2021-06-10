@@ -3,7 +3,7 @@ package github.zzz.rpc.core.serializer;
 /**
  * 通用的序列化反序列化接口
  * 包含多种序列化方式的实现
- * @author zzz
+ *
  */
 public interface CommonSerializer {
 

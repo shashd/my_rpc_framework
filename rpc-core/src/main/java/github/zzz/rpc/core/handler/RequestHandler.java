@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 /**
  * 进行过程调用的处理器，处理具体的逻辑
  * 处理RpcRequest和服务对象（RequestHandlerThread传递的）
- * @author zzz
+ *
  */
 public class RequestHandler {
 

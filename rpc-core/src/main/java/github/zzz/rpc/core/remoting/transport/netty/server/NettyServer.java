@@ -1,8 +1,11 @@
 package github.zzz.rpc.core.remoting.transport.netty.server;
 
+import github.zzz.rpc.common.enumeration.RpcError;
+import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
 import github.zzz.rpc.core.remoting.RpcServer;
+import github.zzz.rpc.core.serializer.CommonSerializer;
 import github.zzz.rpc.core.serializer.JsonSerializer;
 import github.zzz.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -19,14 +22,19 @@ import org.slf4j.LoggerFactory;
 /**
  * Netty实现的BIO版本的传输协议
  * 实现server的监听的功能
- * @author zzz
+ *
  */
 public class NettyServer implements RpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
+    private CommonSerializer serializer;
 
     @Override
     public void start(int port) {
+        if (serializer == null){
+            logger.error("Did not set the serializer");
+            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+        }
         // 默认的线程数是cpu核数的两倍
         // 监听客户端连接，专门负责与客户端创建连接，并把连接注册到workerGroup的Selector中
         EventLoopGroup bossGroup = new NioEventLoopGroup();
@@ -56,7 +64,7 @@ public class NettyServer implements RpcServer {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             ChannelPipeline pipeline = socketChannel.pipeline();
                             // 解码器，是因为没有对合适的对象进行编码和解码吗？
-                            pipeline.addLast(new CommonEncoder(new KryoSerializer()));
+                            pipeline.addLast(new CommonEncoder(serializer));
                             pipeline.addLast(new CommonDecoder());
                             // 数据处理器
                             pipeline.addLast(new NettyServerHandler());
@@ -76,6 +84,10 @@ public class NettyServer implements RpcServer {
             workerGroup.shutdownGracefully();
         }
 
+    }
 
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
     }
 }

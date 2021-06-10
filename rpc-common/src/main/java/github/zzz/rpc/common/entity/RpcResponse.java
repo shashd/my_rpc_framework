@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * server对client的响应消息对象
  * 类型设置为泛型
- * @author zzz
+ *
  */
 @Data
 @NoArgsConstructor

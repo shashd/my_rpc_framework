@@ -12,7 +12,7 @@ import java.net.Socket;
 
 /**
  * 自定义workerThread，仅仅在用最简单的socket通信的时候使用
- * @author zzz
+ *
  */
 public class WorkerThread implements Runnable{
 

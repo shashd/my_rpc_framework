@@ -4,17 +4,22 @@ import github.zzz.rpc.core.handler.RequestHandler;
 import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
+import github.zzz.rpc.core.remoting.transport.socket.util.ObjectReader;
+import github.zzz.rpc.core.remoting.transport.socket.util.ObjectWriter;
+import github.zzz.rpc.core.serializer.CommonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 /**
  * 处理服务注册的线程
  * 应该和以前的workerThread大同小异
- * @author zzz
+ *
  */
 public class RequestHandlerThread implements Runnable{
 
@@ -23,11 +28,15 @@ public class RequestHandlerThread implements Runnable{
     private Socket socket;
     private RequestHandler requestHandler;
     private ServiceRegistry serviceRegistry;
+    private CommonSerializer serializer;
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, ServiceRegistry serviceRegistry){
+
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler,
+                                ServiceRegistry serviceRegistry, CommonSerializer serializer){
         this.socket = socket;
         this.requestHandler = requestHandler;
         this.serviceRegistry = serviceRegistry;
+        this.serializer = serializer;
     }
 
     /**
@@ -35,17 +44,17 @@ public class RequestHandlerThread implements Runnable{
      */
     @Override
     public void run(){
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(socket.getInputStream());
-             ObjectOutputStream objectOutputStream = new ObjectOutputStream(socket.getOutputStream())) {
+        try (InputStream inputStream = socket.getInputStream();
+             OutputStream outputStream = socket.getOutputStream()) {
             // 1. get rpcRequest
-            RpcRequest rpcRequest = (RpcRequest) objectInputStream.readObject();
+            RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
             // 2. get service object by interface name
             String interfaceName  = rpcRequest.getInterfaceName();
             Object service = serviceRegistry.getService(interfaceName);
             Object result = requestHandler.handle(rpcRequest, service);
             // 3. get response object
-            objectOutputStream.writeObject(RpcResponse.success(result,rpcRequest.getRequestId()));
-            objectOutputStream.flush();
+            RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());
+            ObjectWriter.writeObject(outputStream,response,serializer);
         } catch (Exception e) {
             logger.error("Error happens when running：", e);
         }

@@ -1,8 +1,11 @@
 package github.zzz.rpc.core.remoting.transport.socket.server;
 
+import github.zzz.rpc.common.enumeration.RpcError;
+import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.core.handler.RequestHandler;
 import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.core.remoting.RpcServer;
+import github.zzz.rpc.core.serializer.CommonSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +15,7 @@ import java.util.concurrent.*;
 
 /**
  * 实现rpc中的server
- * @author zzz
+ *
  */
 public class SocketServer implements RpcServer {
     private static final Logger logger = LoggerFactory.getLogger(SocketServer.class);
@@ -26,6 +29,7 @@ public class SocketServer implements RpcServer {
     private final ExecutorService threadPool;
     private final ServiceRegistry serviceRegistry;
     private final RequestHandler requestHandler;
+    private CommonSerializer serializer;
 
     /**
      * 初始化线程池，注册服务等内容
@@ -47,16 +51,25 @@ public class SocketServer implements RpcServer {
      */
     @Override
     public void start(int port) {
+        if (serializer == null){
+            logger.error("Did not set the serializer");
+            throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
+        }
         try (ServerSocket serverSocket = new ServerSocket(port)) {
             logger.info("Server is starting...");
             Socket socket;
             while((socket = serverSocket.accept()) != null) {
                 logger.info("Client connected, ip: " + socket.getInetAddress());
-                threadPool.execute(new RequestHandlerThread(socket, requestHandler, serviceRegistry));
+                threadPool.execute(new RequestHandlerThread(socket, requestHandler, serviceRegistry, serializer));
             }
             threadPool.shutdown();
         } catch (Exception e) {
             logger.error("Error happens when running: ", e);
         }
+    }
+
+    @Override
+    public void setSerializer(CommonSerializer serializer) {
+        this.serializer = serializer;
     }
 }

@@ -7,7 +7,7 @@ import lombok.Getter;
  * RPC调用异常的情况
  * 可以直接返回对应code的RpcException的信息
  * todo: 完善更多的exception的情况
- * @author zzz
+ *
  */
 @AllArgsConstructor
 @Getter
@@ -23,7 +23,8 @@ public enum RpcError {
     UNKNOWN_PACKAGE_TYPE("UNKNOWN PACKAGE TYPE"),
     UNKNOWN_SERIALIZER("UNKNOWN SERIALIZER"),
     SERVICE_INVOCATION_FAILURE("SERVICE INVOCATION FAILURE"),
-    RESPONSE_NOT_MATCH("RESPONSE NOT MATCH");
+    RESPONSE_NOT_MATCH("RESPONSE NOT MATCH"),
+    SERIALIZER_NOT_FOUND("SERIALIZER_NOT_FOUND");
 
     private final String message;
 }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 
 /**
  * 测试api的对象
- * @author zzz
+ *
  */
 
 @Data

@@ -4,6 +4,7 @@ import github.zzz.rpc.api.HelloService;
 import github.zzz.rpc.core.registry.DefaultServiceRegistry;
 import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.core.remoting.transport.netty.server.NettyServer;
+import github.zzz.rpc.core.serializer.KryoSerializer;
 import github.zzz.test.server.impl.HelloServiceImpl;
 
 /**
@@ -19,6 +20,7 @@ public class NettyTestServer {
         HelloService helloService = new HelloServiceImpl();
         serviceRegistry.register(helloService);
         // 开始运行
+        nettyServer.setSerializer(new KryoSerializer());
         nettyServer.start(9999);
     }
 }

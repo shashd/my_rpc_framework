@@ -2,7 +2,7 @@ package github.zzz.rpc.core.registry;
 
 /**
  * 服务注册接口
- * @author zzz
+ *
  */
 public interface ServiceRegistry {
 

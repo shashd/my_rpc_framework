@@ -8,7 +8,7 @@ import github.zzz.rpc.api.HelloService;
 
 /**
  * HelloService的实现类，这个项目的pom中需要实现依赖
- * @author zzz
+ *
  */
 public class HelloServiceImpl implements HelloService {
 
@@ -21,7 +21,7 @@ public class HelloServiceImpl implements HelloService {
     @Override
     public String sayHello(Hello hello){
         logger.info("get message: {}", hello.getMessage());
-        return "This is sayHello implementation function";
+        return "This is sayHello implementation function : " + hello.toString();
     }
 
 }

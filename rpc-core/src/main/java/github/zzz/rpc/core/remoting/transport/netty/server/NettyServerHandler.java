@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * 直接和rpcRequest打交道
  * 数据时从远程主机到用户应用程序则是“入站(inbound)”
  * 这个前后应该是有两个版本，所以先初始化一个的?
- * @author zzz
+ *
  */
 public class NettyServerHandler extends SimpleChannelInboundHandler<RpcRequest> {
 

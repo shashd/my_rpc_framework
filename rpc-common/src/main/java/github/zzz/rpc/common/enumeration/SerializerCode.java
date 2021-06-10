@@ -6,7 +6,7 @@ import lombok.Getter;
 /**
  * 字节流中标识序列化和反序列化器
  * 这个目前也并没有被使用到
- * @author zzz
+ *
  */
 @AllArgsConstructor
 @Getter

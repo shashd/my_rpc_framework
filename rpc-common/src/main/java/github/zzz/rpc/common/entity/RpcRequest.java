@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * client向着server发送的请求对象
  * 能够序列化，包含id，接口名称，方法，方法参数和类型，以及是否为心跳包的判断
- * @author zzz
+ *
  */
 
 @Data

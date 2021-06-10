@@ -13,7 +13,7 @@ import java.io.IOException;
 
 /**
  * Json实现序列化的方式一般使用Jackson包，通过ObjectMapper类来进行操作
- * @author zzz
+ *
  */
 public class JsonSerializer implements CommonSerializer{
 

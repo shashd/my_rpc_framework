@@ -3,6 +3,8 @@ package github.zzz.rpc.core.handler;
 import github.zzz.rpc.common.enumeration.ResponseCode;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
+import github.zzz.rpc.core.provider.ServiceProvider;
+import github.zzz.rpc.core.provider.ServiceProviderImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,18 +20,22 @@ public class RequestHandler {
 
 
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
+    private static final ServiceProvider serviceProvider;
 
+    static {
+        serviceProvider = new ServiceProviderImpl();
+    }
 
     /**
      * 执行主要逻辑，调用invokeTargetMethod并且记录日志
      * @param rpcRequest rpcRequest对象
-     * @param service 服务对象
      * @return rpcResponse对象
      */
-    public Object handle(RpcRequest rpcRequest, Object service){
+    public Object handle(RpcRequest rpcRequest){
         Object result = null;
         try {
-            result = invokeTargetMethod(rpcRequest, service);
+            Object service = serviceProvider.getServiceProvider(rpcRequest.getInterfaceName());
+            result = invokeTargetMethod(rpcRequest,service);
             // Service : github.zzz.rpc.api.HelloService successfully use the Method : sayHello
             logger.info("Service : {} successfully use the Method : {}",rpcRequest.getInterfaceName(),
                     rpcRequest.getMethodName());

@@ -1,22 +1,17 @@
 package github.zzz.rpc.core.registry;
 
+import java.net.InetSocketAddress;
+
 /**
- * 服务注册接口
- *
+ * Nacos用的服务注册接口
  */
 public interface ServiceRegistry {
 
     /**
-     * 注册服务信息
-     * @param service 服务对象
-     * @param <T> 对象
-     */
-    <T> void register(T service);
-
-    /**
-     * 根据服务名获取服务细心
+     * 注册服务信息（名称和地址）到注册中心
      * @param serviceName 服务名称
-     * @return 服务信息
+     * @param inetSocketAddress 实现IP套接字地址（IP地址+端口号）
      */
-    Object getService(String serviceName);
+    void register(String serviceName, InetSocketAddress inetSocketAddress);
+
 }

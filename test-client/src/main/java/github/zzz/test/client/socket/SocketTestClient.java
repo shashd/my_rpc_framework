@@ -14,7 +14,7 @@ import github.zzz.rpc.core.serializer.KryoSerializer;
 public class SocketTestClient {
 
     public static void main(String[] args) {
-        RpcClient client = new SocketClient("localhost",9000);
+        RpcClient client = new SocketClient();
         client.setSerializer(new KryoSerializer());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);

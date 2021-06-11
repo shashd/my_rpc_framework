@@ -5,6 +5,8 @@ import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.RpcMessageChecker;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
+import github.zzz.rpc.core.registry.NacosServiceDiscovery;
+import github.zzz.rpc.core.registry.ServiceDiscovery;
 import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
@@ -22,24 +24,19 @@ import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+
 /**
  * Netty实现的BIO版本的传输协议
  * 实现Client中的sendRequest的功能
- *
+ * 添加nacos作为注册中心之后，host和port是通过nacos获取的，而不是本身声明的
  */
 public class NettyClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
-
-    private String host;
-    private int port;
     private static final Bootstrap bootstrap;
     private CommonSerializer serializer;
-
-    public NettyClient(String host, int port){
-        this.host = host;
-        this.port = port;
-    }
+    private ServiceDiscovery serviceDiscovery = new NacosServiceDiscovery();
 
     static {
         // 创建线程组和配置client的启动对象，随时准备连接服务端
@@ -79,7 +76,11 @@ public class NettyClient implements RpcClient {
         });
 
         try {
+            // 通过服务发现得到对应的地址
+            InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
             // 通过bootstrap连接服务端
+            String host = inetSocketAddress.getHostName();
+            int port = inetSocketAddress.getPort();
             ChannelFuture future = bootstrap.connect(host, port).sync();
             logger.info("Client connected to the server {}:{}", host, port);
             // 通过Channel发送请求消息

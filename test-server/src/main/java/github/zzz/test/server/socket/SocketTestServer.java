@@ -1,7 +1,7 @@
 package github.zzz.test.server.socket;
 
 import github.zzz.rpc.api.HelloService;
-import github.zzz.rpc.core.registry.DefaultServiceRegistry;
+import github.zzz.rpc.core.registry.NacosServiceRegistry;
 import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.core.remoting.transport.socket.server.SocketServer;
 import github.zzz.rpc.core.serializer.KryoSerializer;
@@ -14,15 +14,12 @@ import github.zzz.test.server.impl.HelloServiceImpl;
  */
 public class SocketTestServer {
     public static void main(String[] args) {
-        // 1. register the service
+        // 1. 声明服务
         HelloService helloService = new HelloServiceImpl();
-        ServiceRegistry serviceRegistry = new DefaultServiceRegistry();
-        serviceRegistry.register(helloService);
         // 2. start request handler
-        // 暴露的是单个的服务
-        SocketServer socketServer = new SocketServer(serviceRegistry);
+        SocketServer socketServer = new SocketServer("127.0.0.1",9998);
         socketServer.setSerializer(new KryoSerializer());
-        socketServer.start(9000);
+        socketServer.publishService(helloService,HelloService.class);
 
     }
 }

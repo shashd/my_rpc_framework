@@ -13,7 +13,7 @@ import github.zzz.rpc.core.serializer.KryoSerializer;
 public class NettyTestClient {
 
     public static void main(String[] args) {
-        RpcClient client = new NettyClient("localhost",9999);
+        RpcClient client = new NettyClient();
         client.setSerializer(new KryoSerializer());
         RpcClientProxy rpcClientProxy = new RpcClientProxy(client);
         HelloService helloService = rpcClientProxy.getProxy(HelloService.class);

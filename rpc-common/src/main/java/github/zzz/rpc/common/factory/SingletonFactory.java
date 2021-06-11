@@ -13,7 +13,7 @@ public class SingletonFactory {
     /**
      * 分别是class和对应的实例
      */
-    private static Map<Class,Object> objectMap = new HashMap<>();
+    private static Map<Class,Object> objectMap = new HashMap<Class,Object>();
 
     private SingletonFactory(){}
 
@@ -33,7 +33,7 @@ public class SingletonFactory {
                 try {
                     instance = clazz.newInstance();
                     objectMap.put(clazz,instance);
-                } catch (InstantiationException | IllegalAccessException e) {
+                } catch (Exception e) {
                     throw new RuntimeException(e.getMessage(), e);
                 }
             }

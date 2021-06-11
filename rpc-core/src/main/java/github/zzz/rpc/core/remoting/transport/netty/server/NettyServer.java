@@ -4,10 +4,12 @@ import github.zzz.rpc.common.enumeration.RpcError;
 import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
+import github.zzz.rpc.core.provider.ServiceProvider;
+import github.zzz.rpc.core.provider.ServiceProviderImpl;
+import github.zzz.rpc.core.registry.NacosServiceRegistry;
+import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.core.remoting.RpcServer;
 import github.zzz.rpc.core.serializer.CommonSerializer;
-import github.zzz.rpc.core.serializer.JsonSerializer;
-import github.zzz.rpc.core.serializer.KryoSerializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
@@ -18,16 +20,30 @@ import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+
 
 /**
  * Netty实现的BIO版本的传输协议
  * 实现server的监听的功能
- *
+ * 添加了Nacos之后通过ServiceRegistry和ServiceProvider来注册服务和实例
  */
 public class NettyServer implements RpcServer {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyServer.class);
     private CommonSerializer serializer;
+
+    private String host;
+    private int port;
+    private ServiceRegistry serviceRegistry;
+    private ServiceProvider serviceProvider;
+
+    public NettyServer(String host, int port){
+        this.host = host;
+        this.port = port;
+        this.serviceRegistry = new NacosServiceRegistry();
+        this.serviceProvider = new ServiceProviderImpl();
+    }
 
     @Override
     public void start(int port) {
@@ -89,5 +105,18 @@ public class NettyServer implements RpcServer {
     @Override
     public void setSerializer(CommonSerializer serializer) {
         this.serializer = serializer;
+    }
+
+    @Override
+    public <T> void publishService(Object service, Class<T> serviceClass) {
+        if (service == null){
+            logger.info("publishService - service is not found");
+            throw new RpcException(RpcError.SERVICE_NOT_FOUND);
+        }
+        String serviceName = serviceClass.getCanonicalName();
+        serviceProvider.addServiceProvider(service,serviceName);
+        serviceRegistry.register(serviceName,new InetSocketAddress(host,port));
+        // 带来的问题是一个服务端只能注册一个服务，而不是多个，因为直接调用了start，需要进行修改
+        start(port);
     }
 }

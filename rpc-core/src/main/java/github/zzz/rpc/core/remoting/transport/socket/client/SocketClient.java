@@ -4,6 +4,10 @@ import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.common.enumeration.RpcError;
 import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.RpcMessageChecker;
+import github.zzz.rpc.core.provider.ServiceProvider;
+import github.zzz.rpc.core.registry.NacosServiceDiscovery;
+import github.zzz.rpc.core.registry.ServiceDiscovery;
+import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.core.remoting.RpcClient;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.core.remoting.transport.socket.util.ObjectReader;
@@ -17,23 +21,17 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
  * 实现client通信的类
- *
+ * 添加Nacos之后直接从serviceDiscovery中获取地址和端口
  */
 public class SocketClient implements RpcClient {
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
-
-    private final String host;
-    private final int port;
     private CommonSerializer serializer;
-
-    public SocketClient(String host, int port){
-        this.host = host;
-        this.port = port;
-    }
+    private static ServiceDiscovery serviceDiscovery = new NacosServiceDiscovery();
 
     /**
      * 发送一个RpcRequest对象，并且接受返回的RpcResponse对象
@@ -46,13 +44,14 @@ public class SocketClient implements RpcClient {
             logger.error("Did not set the serializer");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
-        try(Socket socket = new Socket(host,port)){
+        InetSocketAddress inetSocketAddress = serviceDiscovery.lookupService(rpcRequest.getInterfaceName());
+        try(Socket socket = new Socket(inetSocketAddress.getHostName(),inetSocketAddress.getPort())){
             OutputStream outputStream = socket.getOutputStream();
             InputStream inputStream = socket.getInputStream();
             // 序列化发送
             ObjectWriter.writeObject(outputStream,rpcRequest,serializer);
             // 得到反序列化后的结果
-            RpcResponse  rpcResponse= (RpcResponse)ObjectReader.readObject(inputStream);
+            RpcResponse rpcResponse= (RpcResponse)ObjectReader.readObject(inputStream);
             // 进行校验
             RpcMessageChecker.check(rpcRequest,rpcResponse);
             return rpcResponse.getData();

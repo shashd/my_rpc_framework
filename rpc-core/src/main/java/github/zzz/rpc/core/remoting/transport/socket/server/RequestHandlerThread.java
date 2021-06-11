@@ -1,7 +1,6 @@
 package github.zzz.rpc.core.remoting.transport.socket.server;
 
 import github.zzz.rpc.core.handler.RequestHandler;
-import github.zzz.rpc.core.registry.ServiceRegistry;
 import github.zzz.rpc.common.entity.RpcRequest;
 import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.core.remoting.transport.socket.util.ObjectReader;
@@ -11,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
@@ -27,15 +24,12 @@ public class RequestHandlerThread implements Runnable{
 
     private Socket socket;
     private RequestHandler requestHandler;
-    private ServiceRegistry serviceRegistry;
     private CommonSerializer serializer;
 
 
-    public RequestHandlerThread(Socket socket, RequestHandler requestHandler,
-                                ServiceRegistry serviceRegistry, CommonSerializer serializer){
+    public RequestHandlerThread(Socket socket, RequestHandler requestHandler, CommonSerializer serializer){
         this.socket = socket;
         this.requestHandler = requestHandler;
-        this.serviceRegistry = serviceRegistry;
         this.serializer = serializer;
     }
 
@@ -48,10 +42,7 @@ public class RequestHandlerThread implements Runnable{
              OutputStream outputStream = socket.getOutputStream()) {
             // 1. get rpcRequest
             RpcRequest rpcRequest = (RpcRequest) ObjectReader.readObject(inputStream);
-            // 2. get service object by interface name
-            String interfaceName  = rpcRequest.getInterfaceName();
-            Object service = serviceRegistry.getService(interfaceName);
-            Object result = requestHandler.handle(rpcRequest, service);
+            Object result = requestHandler.handle(rpcRequest);
             // 3. get response object
             RpcResponse<Object> response = RpcResponse.success(result, rpcRequest.getRequestId());
             ObjectWriter.writeObject(outputStream,response,serializer);

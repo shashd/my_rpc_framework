@@ -5,6 +5,8 @@ import com.alibaba.nacos.api.naming.pojo.Instance;
 import github.zzz.rpc.common.enumeration.RpcError;
 import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.NacosUtil;
+import github.zzz.rpc.core.loadbalancer.LoadBalancer;
+import github.zzz.rpc.core.loadbalancer.RandomLoadBalancer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,16 @@ import java.util.List;
  */
 public class NacosServiceDiscovery implements ServiceDiscovery{
     private static final Logger logger = LoggerFactory.getLogger(NacosServiceDiscovery.class);
+
+    private final LoadBalancer loadBalancer;
+
+    public NacosServiceDiscovery(LoadBalancer loadBalancer){
+        if (loadBalancer == null){
+            this.loadBalancer = new RandomLoadBalancer();
+        } else{
+            this.loadBalancer = loadBalancer;
+        }
+    }
 
     /**
      * 根据服务名称从注册中心得到对应的地址
@@ -31,10 +43,11 @@ public class NacosServiceDiscovery implements ServiceDiscovery{
                 logger.info("SERVICE_NOT_FOUND");
                 throw new RpcException(RpcError.SERVICE_NOT_FOUND);
             }
-            Instance instance = instances.get(0);
+            // 通过负载均衡分配
+            Instance instance = loadBalancer.select(instances);
             return new InetSocketAddress(instance.getIp(),instance.getPort());
         } catch (NacosException e){
-            logger.info("Error happens when connecting the Nacos",e);
+            logger.info("Error happens when connecting the Nacos in service discovery",e);
         }
         return null;
     }

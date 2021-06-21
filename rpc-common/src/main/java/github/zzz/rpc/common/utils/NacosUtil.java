@@ -34,7 +34,7 @@ public class NacosUtil{
         try {
             return NamingFactory.createNamingService(SERVICE_ADDRESS);
         } catch (NacosException e){
-            logger.info("Error happens when connecting the Nacos");
+            logger.info("Error happens when connecting the Nacos in Nacos Util");
             throw new RpcException(RpcError.FAILED_TO_CONNECT_TO_SERVICE_REGISTRY);
         }
     }
@@ -42,11 +42,11 @@ public class NacosUtil{
     /**
      * 本地的set和namingService中一起注册服务
      * @param serviceName 服务名
-     * @param inetSocketAddress 实现IP套接字地址（IP地址+端口号）
+     * @param address 实现IP套接字地址（IP地址+端口号）
      */
-    public static void registerService(String serviceName, InetSocketAddress inetSocketAddress) throws NacosException{
-        namingService.registerInstance(serviceName, inetSocketAddress.getHostName(), inetSocketAddress.getPort());
-        NacosUtil.inetSocketAddress = inetSocketAddress;
+    public static void registerService(String serviceName, InetSocketAddress address) throws NacosException{
+        namingService.registerInstance(serviceName, address.getHostName(), address.getPort());
+        NacosUtil.inetSocketAddress = address;
         serviceNames.add(serviceName);
     }
 

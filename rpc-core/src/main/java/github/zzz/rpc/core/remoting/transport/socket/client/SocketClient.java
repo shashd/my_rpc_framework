@@ -4,6 +4,8 @@ import github.zzz.rpc.common.entity.RpcResponse;
 import github.zzz.rpc.common.enumeration.RpcError;
 import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.RpcMessageChecker;
+import github.zzz.rpc.core.loadbalancer.LoadBalancer;
+import github.zzz.rpc.core.loadbalancer.RandomLoadBalancer;
 import github.zzz.rpc.core.provider.ServiceProvider;
 import github.zzz.rpc.core.registry.NacosServiceDiscovery;
 import github.zzz.rpc.core.registry.ServiceDiscovery;
@@ -31,7 +33,25 @@ import java.net.Socket;
 public class SocketClient implements RpcClient {
     private static final Logger logger = LoggerFactory.getLogger(SocketClient.class);
     private CommonSerializer serializer;
-    private static ServiceDiscovery serviceDiscovery = new NacosServiceDiscovery();
+    private LoadBalancer loadBalancer;
+    private ServiceDiscovery serviceDiscovery;
+
+    public SocketClient(){
+        this(DEFAULT_SERIALIZER,new RandomLoadBalancer());
+    }
+
+    public SocketClient(Integer serializer){
+        this(serializer,new RandomLoadBalancer());
+    }
+
+    public SocketClient(LoadBalancer loadBalancer){
+        this(DEFAULT_SERIALIZER,loadBalancer);
+    }
+
+    public SocketClient(Integer serializer, LoadBalancer loadBalancer){
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
+        this.serializer = CommonSerializer.getByCode(serializer);
+    }
 
     /**
      * 发送一个RpcRequest对象，并且接受返回的RpcResponse对象

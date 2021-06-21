@@ -8,6 +8,9 @@ import github.zzz.rpc.core.serializer.CommonSerializer;
  *
  */
 public interface RpcServer {
+
+    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
+
     /**
      * 服务器端启动监听和处理的逻辑
      * @param port 端口号

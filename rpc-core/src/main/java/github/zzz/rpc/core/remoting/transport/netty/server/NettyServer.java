@@ -4,6 +4,7 @@ import github.zzz.rpc.common.enumeration.RpcError;
 import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
+import github.zzz.rpc.core.hook.ShutdownHook;
 import github.zzz.rpc.core.provider.ServiceProvider;
 import github.zzz.rpc.core.provider.ServiceProviderImpl;
 import github.zzz.rpc.core.registry.NacosServiceRegistry;
@@ -47,10 +48,12 @@ public class NettyServer implements RpcServer {
 
     @Override
     public void start(int port) {
-        if (serializer == null){
+        if (serializer == null) {
             logger.error("Did not set the serializer");
             throw new RpcException(RpcError.SERIALIZER_NOT_FOUND);
         }
+        // 清除之前的注册信息
+        ShutdownHook.getShutdownHook().addClearAAllHook();
         // 默认的线程数是cpu核数的两倍
         // 监听客户端连接，专门负责与客户端创建连接，并把连接注册到workerGroup的Selector中
         EventLoopGroup bossGroup = new NioEventLoopGroup();

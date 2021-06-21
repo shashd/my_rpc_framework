@@ -10,6 +10,8 @@ import github.zzz.rpc.core.serializer.CommonSerializer;
  */
 public interface RpcClient {
 
+    int DEFAULT_SERIALIZER = CommonSerializer.KRYO_SERIALIZER;
+
     /**
      * 发送请求
      * @param rpcRequest

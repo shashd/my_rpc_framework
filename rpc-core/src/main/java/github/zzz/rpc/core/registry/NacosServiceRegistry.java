@@ -31,8 +31,8 @@ public class NacosServiceRegistry implements ServiceRegistry{
     public void register(String serviceName, InetSocketAddress inetSocketAddress){
         try {
             NacosUtil.registerService(serviceName,inetSocketAddress);
-        } catch (NacosException e){
-            logger.info("Error happens when connecting the Nacos");
+        } catch(NacosException e){
+            logger.info("Error happens when connecting the Nacos in service registry");
             throw new RpcException(RpcError.REGISTER_SERVICE_FAILED);
         }
     }

@@ -5,6 +5,8 @@ import github.zzz.rpc.common.exception.RpcException;
 import github.zzz.rpc.common.utils.RpcMessageChecker;
 import github.zzz.rpc.core.codec.CommonDecoder;
 import github.zzz.rpc.core.codec.CommonEncoder;
+import github.zzz.rpc.core.loadbalancer.LoadBalancer;
+import github.zzz.rpc.core.loadbalancer.RandomLoadBalancer;
 import github.zzz.rpc.core.registry.NacosServiceDiscovery;
 import github.zzz.rpc.core.registry.ServiceDiscovery;
 import github.zzz.rpc.core.remoting.RpcClient;
@@ -35,12 +37,13 @@ public class NettyClient implements RpcClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyClient.class);
     private static final Bootstrap bootstrap;
+    private static final EventLoopGroup group;
     private CommonSerializer serializer;
-    private ServiceDiscovery serviceDiscovery = new NacosServiceDiscovery();
+    private ServiceDiscovery serviceDiscovery;
 
     static {
         // 创建线程组和配置client的启动对象，随时准备连接服务端
-        EventLoopGroup group = new NioEventLoopGroup();
+        group = new NioEventLoopGroup();
         bootstrap = new Bootstrap();
         // option()设置的是服务端用于接收进来的连接，也就是boosGroup线程
         // childOption()设置的是提供给父管道接收到的连接，也就是workerGroup线程
@@ -49,6 +52,23 @@ public class NettyClient implements RpcClient {
                 .handler(new LoggingHandler(LogLevel.INFO))
                 // 是否开启tcp底层心跳机制
                 .option(ChannelOption.SO_KEEPALIVE, true);
+    }
+
+    public NettyClient(){
+        this(DEFAULT_SERIALIZER,new RandomLoadBalancer());
+    }
+
+    public NettyClient(Integer serializer){
+        this(serializer,new RandomLoadBalancer());
+    }
+
+    public NettyClient(LoadBalancer loadBalancer){
+        this(DEFAULT_SERIALIZER,loadBalancer);
+    }
+
+    public NettyClient(Integer serializer, LoadBalancer loadBalancer){
+        this.serviceDiscovery = new NacosServiceDiscovery(loadBalancer);
+        this.serializer = CommonSerializer.getByCode(serializer);
     }
 
     /**
